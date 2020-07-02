@@ -22,7 +22,7 @@ export default function DialogSelect(props) {
     const [open, setOpen] = useState(false);
     const [formStatus, updateFormStatus] = useState(false);
     const [taskName, taskname] = useState("");
-    const [taskDetails, taskdetails] = useState("disabled");
+    const [taskDetails, taskdetails] = useState("");
     const [taskStatus, taskstatus] = useState("new");
 
     const [detailsCharacterLimit, setDetailsCharacterLimit] = useState(500)
