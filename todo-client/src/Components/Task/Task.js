@@ -22,11 +22,12 @@ class Task extends React.Component {
             done: [],
             inProgress: [],
             active: false,
-            showAlert:false,
+            showAlert: false,
         };
         this.onClose = this.onClose.bind(this);
         this.onShow = this.onShow.bind(this);
         this.update = this.update.bind(this);
+        this.getTask = this.getTask.bind(this);
 
     }
 
@@ -42,30 +43,24 @@ class Task extends React.Component {
         });
     }
 
+    async getTask() {
+        let response = await fetch("http://localhost:3002/tasks/");
+        let json = await response.json();
+        return json;
+    }
+
     componentDidMount() {
         let component = this;
         let newTask = [];
+        let taskCount;
         let inProgressTask = [];
         let doneTask = [];
 
-        fetch("http://localhost:3002/tasks/").then(function (res) {
-            return res.json();
-
-        }).then(function (result) {
-            let taskCount = result.data.length;
-
-
-            result.data.map((value, index) => {
-                if (value.taskStatus === "new") {
-                    newTask.push(value);
-                }
-                if (value.taskStatus === "inProgress") {
-                    inProgressTask.push(value);
-                }
-                if (value.taskStatus === "done") {
-                    doneTask.push(value);
-                }
-            });
+        this.getTask().then(function (result) {
+            taskCount = result.data.length;
+            newTask = result.data.filter(results => results.taskStatus === "new");
+            doneTask = result.data.filter(results => results.taskStatus === "done");
+            inProgressTask = result.data.filter(results => results.taskStatus === "inProgress");
 
             let arr = [];
             arr[0] = newTask;
@@ -84,9 +79,10 @@ class Task extends React.Component {
             });
 
         }).catch(function (err) {
-            console.log(err);
+            console.error(err);
         });
     }
+
     update() {
         this.componentDidMount();
     }
@@ -95,7 +91,9 @@ class Task extends React.Component {
         return (
             <div>
                 <Header update={this.update}/>
-                <React.Fragment>  <LinearProgress style={{"height":"8px","color":"green"}} className="bg-danger border-1" variant="determinate"  value={this.state.completionRatio}/> </React.Fragment>
+                <React.Fragment> <LinearProgress style={{"height": "8px", "color": "green"}}
+                                                 className="bg-danger border-1" variant="determinate"
+                                                 value={this.state.completionRatio}/> </React.Fragment>
                 <div className="row mt-4">
                     <div className="col-lg-4 col-md-12 col-sm-12 mb-2 md-sm-2">
                         <div className="col-12 list-group-item bg-light ">
